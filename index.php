@@ -49,6 +49,13 @@ class Table
         return $this;
     }
 
+    public function timestamps()
+    {
+        $this->attributes['created_at'] = "created_at DATETIME NULL";
+        $this->attributes['updated_at'] = "updated_at DATETIME NULL";
+        return $this;
+    }
+
     public function nullable()
     {
         $this->attributes[$this->name] .= ' NULL';
@@ -64,6 +71,12 @@ class Table
     public function unique()
     {
         $this->attributes[$this->name] .= ' UNIQUE';
+        return $this;
+    }
+
+    public function default($value)
+    {
+        $this->attributes[$this->name] .= " DEFAULT $value";
         return $this;
     }
 
@@ -83,6 +96,7 @@ $query1 = Table::create('users', function ($table) {
     $table->string('password', 255)->notNullable();
     $table->text('bio')->nullable();
     $table->float('rating')->nullable();
+    $table->timestamps();
 });
 
 $query2 = Table::create('admins', function ($table) {
@@ -93,7 +107,22 @@ $query2 = Table::create('admins', function ($table) {
     $table->text('bio')->nullable();
     $table->float('rating')->nullable();
 });
+
+$query3 = Table::create('accounts', function ($table) {
+    $table->id();
+    $table->string('name', 100)->nullable();
+    $table->string('email', 100)->unique()->notNullable();
+    $table->string('username', 50)->unique()->notNullable();
+    $table->string('password', 255)->notNullable();
+    $table->integer('age', 3)->nullable();
+    $table->integer('status', 3)->default(1);
+    $table->text('bio')->nullable();
+    $table->float('rating')->nullable();
+});
+
 echo '<pre>';
 echo $query1;
 echo "\n";
 echo $query2;
+echo "\n";
+echo $query3;
