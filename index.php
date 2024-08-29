@@ -1,81 +1,82 @@
 <?php
+
 class Table
 {
-    public static $query = 'CREATE TABLE ';
-    public static $attributes = [];
-    public static $buildQuery;
-    public static $name;
+    public $query = 'CREATE TABLE ';
+    public $attributes = [];
+    public $name;
 
     public static function create($tableName, $callback = null)
     {
-        self::$query .= $tableName;
+        $instance = new self();
+        $instance->query .= $tableName;
         if ($callback) {
-            $callback(new self);
+            $callback($instance);
         }
+        return $instance->build();
     }
 
     public function id()
     {
-        self::$attributes['id'] = 'id INT AUTO_INCREMENT PRIMARY KEY';
+        $this->attributes['id'] = 'id INT AUTO_INCREMENT PRIMARY KEY';
     }
 
     public function string($name, $length = 255)
     {
-        self::$name = $name;
-        self::$attributes[$name] = "$name VARCHAR($length)";
+        $this->name = $name;
+        $this->attributes[$name] = "$name VARCHAR($length)";
         return $this;
     }
 
-    public function integer($name, $length=11)
+    public function integer($name, $length = 11)
     {
-        self::$name = $name;
-        self::$attributes[$name] = "$name INT($length)";
+        $this->name = $name;
+        $this->attributes[$name] = "$name INT($length)";
         return $this;
     }
 
-    public function float($name, $length=11)
+    public function float($name, $length = 11)
     {
-        self::$name = $name;
-        self::$attributes[$name] = "$name FLOAT($length)";
+        $this->name = $name;
+        $this->attributes[$name] = "$name FLOAT($length)";
         return $this;
     }
 
     public function text($name)
     {
-        self::$name = $name;
-        self::$attributes[$name] = "$name TEXT";
+        $this->name = $name;
+        $this->attributes[$name] = "$name TEXT";
         return $this;
     }
 
     public function nullable()
     {
-        self::$attributes[self::$name] .= ' NULL';
+        $this->attributes[$this->name] .= ' NULL';
         return $this;
     }
 
     public function notNullable()
     {
-        self::$attributes[self::$name] .= ' NOT NULL';
+        $this->attributes[$this->name] .= ' NOT NULL';
         return $this;
     }
 
     public function unique()
     {
-        self::$attributes[self::$name] .= ' UNIQUE';
+        $this->attributes[$this->name] .= ' UNIQUE';
         return $this;
     }
 
-    public static function build()
+    public function build()
     {
-        print_r(self::$attributes);
-        $attributes = implode(', ', self::$attributes);
-        $build = self::$query . ' (' . $attributes . ');';
+        $attributes = implode(', ', $this->attributes);
+        $build = $this->query . ' (' . $attributes . ');';
         return $build;
     }
 }
 
-
-Table::create('users', function($table) {
+// Usage
+$query1 = Table::create('users', function ($table) {
     $table->id();
     $table->string('email', 100)->unique()->notNullable();
     $table->string('username', 50)->unique()->notNullable();
@@ -84,5 +85,15 @@ Table::create('users', function($table) {
     $table->float('rating')->nullable();
 });
 
-$sql = Table::build();
-echo $sql;
+$query2 = Table::create('admins', function ($table) {
+    $table->id();
+    $table->string('email', 100)->unique()->notNullable();
+    $table->string('username', 50)->unique()->notNullable();
+    $table->string('password', 255)->notNullable();
+    $table->text('bio')->nullable();
+    $table->float('rating')->nullable();
+});
+echo '<pre>';
+echo $query1;
+echo "\n";
+echo $query2;
