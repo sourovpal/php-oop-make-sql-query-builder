@@ -89,7 +89,7 @@ class Table
 }
 
 // Usage
-$query1 = Table::create('users', function ($table) {
+$query1 = Table::create('users', function (Table $table) {
     $table->id();
     $table->string('email', 100)->unique()->notNullable();
     $table->string('username', 50)->unique()->notNullable();
@@ -99,7 +99,7 @@ $query1 = Table::create('users', function ($table) {
     $table->timestamps();
 });
 
-$query2 = Table::create('admins', function ($table) {
+$query2 = Table::create('admins', function (Table $table) {
     $table->id();
     $table->string('email', 100)->unique()->notNullable();
     $table->string('username', 50)->unique()->notNullable();
@@ -108,7 +108,7 @@ $query2 = Table::create('admins', function ($table) {
     $table->float('rating')->nullable();
 });
 
-$query3 = Table::create('accounts', function ($table) {
+$query3 = Table::create('accounts', function (Table $table) {
     $table->id();
     $table->string('name', 100)->nullable();
     $table->string('email', 100)->unique()->notNullable();
